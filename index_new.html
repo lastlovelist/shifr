@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Шифт</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #1a2a6c);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            padding: 30px;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #1a2a6c;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        h2 {
+            color: #b21f1f;
+            margin: 25px 0 15px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #eee;
+            font-size: 1.8rem;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #444;
+        }
+        
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+        
+        input[type="text"]:focus, textarea:focus {
+            border-color: #1a2a6c;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(26, 42, 108, 0.2);
+        }
+        
+        input[type="button"] {
+            background: linear-gradient(to right, #1a2a6c, #2a3c8c);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+            margin-bottom: 20px;
+        }
+        
+        input[type="button"]:hover {
+            background: linear-gradient(to right, #2a3c8c, #3a4c9c);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        input[type="button"]:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+            background-color: #f9f9f9;
+        }
+        
+        .section {
+            background-color: #fff;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .result-box {
+            background-color: #f5f5f5;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 10px;
+            min-height: 100px;
+            word-break: break-all;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            h2 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Шифр</h1>
+        
+        <div class="section">
+            <h2>Зашифровать</h2>
+            <div class="form-group">
+                <label for="messageToEncrypt">Текст:</label>
+                <input type="text" id="messageToEncrypt" placeholder="Введите текст для шифрования">
+            </div>
+            <div class="form-group">
+                <label for="encryptPassword">Пароль:</label>
+                <input type="text" id="encryptPassword" placeholder="Введите пароль">
+            </div>
+            <input type="button" value="Зашифровать" id="encryptBtn">
+            <div class="result-box">
+                <textarea name="result" id="encryptResult" readonly placeholder="Результат шифрования"></textarea>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>Разшифровать</h2>
+            <div class="form-group">
+                <label for="messageToDecrypt">Шифр:</label>
+                <input type="text" id="messageToDecrypt" placeholder="Введите шифр для расшифровки">
+            </div>
+            <div class="form-group">
+                <label for="decryptPassword">Пароль:</label>
+                <input type="text" id="decryptPassword" placeholder="Введите пароль">
+            </div>
+            <input type="button" value="Разшифровать" id="decryptBtn">
+            <div class="result-box">
+                <textarea name="result" id="decryptResult" readonly placeholder="Результат расшифровки"></textarea>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var alfa = [ 'а', 'б', 'в', 'г', 'д', 'е', 'ё', 'ж', 'з', 'и', 'й', 'к', 'л', 'м', 'н', 'о', 'п', 'р', 'с', 'т', 'у', 'ф', 'х', 'ц', 'ч', 'ш', 'щ', 'ъ', 'ы', 'ь', 'э', 'ю', 'я', '.', ',', '?', '!', ' '];
+        var alfa_num = [ 1, 3, 5, 6, 10, 13, 14, 15, 16, 17, 18, 19, 20, 25, 26, 29, 30, 33];
+        var num = [[ 15, 16, 13, 30], [ 16, 5, 10, 15], [ 5, 3, 1], [ 20, 18, 10], [ 25, 6, 20, 29, 18, 6], [ 17, 33, 20, 30], [ 26, 6, 19, 20, 30], [ 19, 6, 14, 30], [ 3, 16, 19, 6, 14, 30], [ 5, 6, 3, 33, 20, 30]];
+
+        function getRandomInt(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        function encrypt_m(message, password) {
+            encrypted_message = '';
+            for (let i = 0; i < message.length; i++) {
+                symbol_id = alfa.indexOf(message[i]) + 1;
+                range_symbol_id = [];
+                for (let i = symbol_id - 9; i <= symbol_id + 9; i++) {
+                    if (i >= 1 && i <= 38) range_symbol_id.push(i);
+                }
+                different_choises = range_symbol_id.filter(value => alfa_num.includes(value));
+                random_symbol_id = different_choises[getRandomInt(0, different_choises.length - 1)];
+
+                third_num = Math.abs(random_symbol_id - symbol_id);
+                if (third_num != 0) fourth_num = random_symbol_id - symbol_id < 0 ? 1 : 0;
+
+                different_choises_of_num = [];
+                different_choises_of_num_id = [];
+                for (let j = 0; j < num.length; j++) {
+                    if (num[j].indexOf(random_symbol_id) != -1) {
+                        different_choises_of_num.push(num[j]);
+                        different_choises_of_num_id.push(j);
+                    }
+                }
+                
+                id = getRandomInt(0, different_choises_of_num.length - 1);
+                random_num = different_choises_of_num[id];
+                first_num = different_choises_of_num_id[id];
+
+                id_symbol_num = random_num.indexOf(random_symbol_id);
+                second_num = id_symbol_num + 1;
+
+                encrypted_message += first_num;
+                encrypted_message += second_num;
+                encrypted_message += third_num;
+                if (third_num != 0) encrypted_message += fourth_num;
+            }
+            
+            encrypted_message_with_pass = '';
+            for (let i = 0, j = 0; i < encrypted_message.length; i++, j++) {
+                if (j == password.length) j = 0;
+                number_of_password = parseInt(password[j]);
+                char_from_message = parseInt(encrypted_message[i]);
+
+                res = number_of_password + char_from_message;
+                if (res > 9) res -= 10;
+                encrypted_message_with_pass += res;
+            }
+            return encrypted_message_with_pass;
+        }
+        // shifr = encrypt_m('хуй','296');
+
+        function decrypt_m(encrypted_message, password) {
+            encrypted_message_without_pass = '';
+            for (let i = 0, j = 0; i < encrypted_message.length; i++, j++) {
+                if (j == password.length) j = 0;
+                number_of_password = parseInt(password[j]);
+                char_from_message = parseInt(encrypted_message[i]);
+
+                res = char_from_message - number_of_password;
+                if (res < 0) {
+                    res = (10 + char_from_message) - number_of_password
+                }
+                encrypted_message_without_pass += res;
+            }
+            encrypted_message = encrypted_message_without_pass;
+
+            let i = 0;
+            let decrypted_message = '';
+            let message = '';
+            while (i < encrypted_message.length) {
+                first_num = parseInt(encrypted_message[i]);
+                second_num = parseInt(encrypted_message[i + 1]);
+                third_num = parseInt(encrypted_message[i + 2]);
+                if (third_num != 0) {
+                    fourth_num = parseInt(encrypted_message[i + 3]);
+                    console.log(first_num, second_num, third_num, fourth_num);
+                    if (fourth_num == 1) {
+                        if (second_num == 0 || second_num - 1 > num[first_num].length) {
+                            console.error('Не существует в', first_num, 'символа номер', second_num);
+                            decrypted_message += '#';
+                        } else {
+                            symbol_on_alfa = alfa[num[first_num][second_num - 1] - 1 + third_num];
+                            decrypted_message += symbol_on_alfa;
+                        }
+                        console.log(symbol_on_alfa);
+                    } else if (fourth_num == 0) {
+                        if (second_num == 0 || second_num - 1 > num[first_num].length) {
+                            console.error('Не существует в', first_num, 'символа номер', second_num);
+                            decrypted_message += '#';
+                        } else {
+                            symbol_on_alfa = alfa[num[first_num][second_num - 1] - 1 - third_num];
+                            decrypted_message += symbol_on_alfa;
+                        }
+                        console.log(symbol_on_alfa);
+                    } else {
+                        console.error('Строка ', first_num, second_num, third_num, fourth_num, ' не содержит символа.');
+                    }
+                    i += 4;
+                } else {
+                    console.log(first_num, second_num, third_num);
+                    symbol_on_alfa = alfa[num[first_num][second_num - 1] - 1];
+                    decrypted_message += symbol_on_alfa;
+                    console.log(symbol_on_alfa);
+                    i += 3;
+                }
+                message += symbol_on_alfa;
+            }
+            return message;
+        }
+
+        // pass = '12102002';
+        // message = decrypt_m(encrypt_m('ура сообщение с парролем уже тут!', pass), pass);
+        
+        document.getElementById('encryptBtn').addEventListener('click', function() {
+            const encryptedText = document.getElementById('messageToEncrypt').value.trim();
+            const password = document.getElementById('encryptPassword').value.trim();
+            const resultElement = document.getElementById('encryptResult');
+            
+            const encrypted = encrypt_m(encryptedText, password);
+            resultElement.textContent = encrypted;
+        });
+        document.getElementById('decryptBtn').addEventListener('click', function() {
+            const decryptedText = document.getElementById('messageToDecrypt').value.trim();
+            const password = document.getElementById('decryptPassword').value.trim();
+            const resultElement = document.getElementById('decryptResult');
+            
+            const decrypted = decrypt_m(decryptedText, password);
+            resultElement.textContent = decrypted;
+        });
+
+        str = '⓿ ❶ ❷ ❸ ❹ ❺ ❻ ❼ ❽ ❾ ❿ ⓫ ⓬ ⓭ ⓮ ⓯ ⓰ ⓱ ⓲ ⓳ ⓴ ⒈ ⒉ ⒊ ⒋ ⒌ ⒍ ⒎ ⒏ ⒐ ⒑ ⒒ ⒓ ⒔ ⒕ ⒖ ⒗ ⒘ ⒙ ⒚ ⒛ ① ② ③ ④ ⑤ ⑥ ⑦ ⑧ ⑨ ⑩ ⑪ ⑫ ⑬ ⑭ ⑮ ⑯ ⑰ ⑱ ⑲ ⑳ ⓐ ⓑ ⓒ ⓓ ⓔ ⓕ ⓖ ⓗ ⓘ ⓙ ⓚ ⓛ ⓜ ⓝ ⓞ ⓟ ⓠ ⓡ ⓢ ⓣ ⓤ ⓥ ⓦ ⓧ ⓨ ⓩ ⓪ ⒜ ⒝ ⒞ ⒟ ⒠ ⒡ ⒢ ⒣ ⒤ ⒥ ⒦ ⒧ ⒨ ⒩ ⒪ ⒫ ⒬ ⒭ ⒮ ⒯ ⒰ ⒱ ⒲ ⒳ ⒴ ⒵ Ⓐ Ⓑ Ⓒ Ⓓ Ⓔ Ⓕ Ⓖ Ⓗ Ⓘ Ⓙ Ⓚ Ⓛ Ⓜ Ⓝ Ⓞ Ⓟ Ⓠ Ⓡ Ⓢ Ⓣ Ⓤ Ⓥ Ⓦ Ⓧ Ⓨ Ⓩ♈ ♉ ♊ ♋ ♌ ♍ ♎ ♏ ♐ ♑ ♒ ♓☀ 🌞 🌑 🌒 🌓 🌔 🌕 🌖 🌗 🌘 ☄ 🌙 🌛 🌜 🌝 🌚 ☉ ☽ ☾ ☼ ☿ ♀ ♁ ♂ ♃ ♄ ♅ ⛢ ♆ ♇ ⚳ ⚴ ⚵ ⚶ ⚷ ⚸ ☊ ☋ ☌ ☍ 💥 🔭 📡 👾 👽 🚀 ✨ 💫 🌌 🛰 🌍 🌎 🧙 🪄 🧹✊ ✋ 👆 👇 👈 👉 👊👌 👍 👎 👏 🤘🤝 🤞 💪 🖐 🙌☝👋 🤚 ✋ 🖖 🤟 🤘 🤙 🖕🤛 🤜 🤲 🙏 ✍ 💅 🤳 🦵 🦶 👂 👃 🧠 🦷 🦴 👁 👅 👄😀 😃 😄 😁 😆 😅 🤣 😂 🙂 🙃 😉 😊 😇 🥰 😍 🤩 😘 😗  😚 😙 😋 😛 😜 🤪 😝 🤑 🤗 🤭 🤫 🤔 🤐 🤨 😐 😑 😶 😏 😒 🙄 😬 🤥 😌 😔 😪 🤤 😴 😷 🤒 🤕 🤢 🤮 🤧 🥵 🥶 🥴 😵 🤯 🤠 🥳 😎 🤓 🧐 😕 😟 🙁  😮 😯 😲 😳 🥺 😦 😧 😨 😰 😥 😢 😭 😱 😖 😣 😞 😓 😩 😫 😤 😡 😠 🤬 😈 👿  💩 🤡 👹 👺 👻  👾 🤖 😺 😸 😹 😻 😼 😽 🙀 😿 😾 🙈 🙉 🙊 👰 👯 👩‍👧‍👦🕵🏻 👩🏻‍💻👶 🧒 👦 👧 🧑 👱 👨 🧔 👩 🧓 👴 👵 🙍 🙎 🙅 🙆 💁 🙋 🙇 🤦 🤷👨‍💻 👩‍💻 🙆‍♀️ 🙋‍♀️ 💁‍♀️ 🤷🏼‍♀️ 👮 🕵 💂 👷 🤴 👸 👳 👲 🧕 🤵 👰 🤰 🤱 👼 🎅 🤶 🧙 🧚 🧛 🧜 🧝 🧞 🧟  🛀 🛌    👪 🗣 👤 👥 👣   ☔ 🥮 🥧  📹 🔱 🥇 🔮  👗👚 👕 🥼 👔 👕 👖 🧣 🧤 🧥 🧦👘 👛 👜 👝 🛍 🎒 👞 👟 🥾 🥿 👢 👑 👒  📿 🥽  🤹🏻‍♀️  🎠 🎡  🎞 📹  🚎 🧚‍♀️ 🚗 🔜 🌈  💾   🎬 📷 📸  🧫  🔭   🧻 🧼 🧽  ⚰ ⚱  📯 ☄🤖  ❄️';
+
+        function charToBase33Fixed4(char) {
+            const codePoint = char.codePointAt(0);
+            if (codePoint === undefined || codePoint > 1185920) {
+                throw new Error('Символ вне диапазона для Base33 (max 1185920)');
+            }
+
+            // Алфавит: 0–9, A–W (33 символа)
+            const alphabet = '0123456789ABCDEFGHIJKLMNOPQRSTUVW';
+            
+            let num = codePoint;
+            let result = '';
+
+            // Переводим в 33‑ричную систему
+            do {
+                result = alphabet[num % 33] + result;
+                num = Math.floor(num / 33);
+            } while (num > 0);
+
+            // Дополняем нулями до 4 символов
+            return result.padStart(4, '0');
+        }
+
+        function base33Fixed4ToChar(base33Str) {
+            // Проверяем входную строку
+            if (typeof base33Str !== 'string' || base33Str.length !== 4) {
+                throw new Error('Входная строка должна быть ровно 4 символа');
+            }
+
+            // Алфавит 33‑ричной системы: 0–9, A–W (33 символа)
+            const alphabet = '0123456789ABCDEFGHIJKLMNOPQRSTUVW';
+            
+            
+            let codePoint = 0;
+            
+            
+            // Переводим из 33‑ричной системы в десятичную
+            for (let i = 0; i < 4; i++) {
+                const char = base33Str[i];
+                const index = alphabet.indexOf(char);
+                
+                if (index === -1) {
+                throw new Error(`Недопустимый символ "${char}" в Base33`);
+                }
+                
+                codePoint = codePoint * 33 + index;
+            }
+            
+            // Проверяем, что код в допустимом диапазоне Юникода
+            if (codePoint > 0x10FFFF) {
+                throw new Error('Кодовая точка выходит за пределы Юникода (U+10FFFF)');
+            }
+            
+            // Преобразуем кодовую точку в символ
+            return String.fromCodePoint(codePoint);
+        }
+
+
+        let char = '';
+        for (let i = 0; i < str.length; i++) {
+            char = charToBase33Fixed4(str[i]);
+            console.log(charToBase33Fixed4(str[i]));
+            console.log(base33Fixed4ToChar(char));
+        }
+    </script>
+</body>
+</html>
